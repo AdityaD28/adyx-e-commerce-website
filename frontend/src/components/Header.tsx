@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { ShoppingBagIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useSession, signOut } from 'next-auth/react'
+import { ShoppingBagIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 
@@ -16,6 +17,12 @@ const navigation = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const { data: session, status } = useSession()
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/' })
+  }
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -88,11 +95,73 @@ export default function Header() {
             </div>
 
             {/* User account */}
-            <Link href="/account">
-              <Button variant="ghost" size="icon" aria-label="Account">
-                <UserIcon className="h-6 w-6" />
-              </Button>
-            </Link>
+            {status === 'loading' ? (
+              <div className="h-6 w-6 animate-pulse bg-primary-200 rounded-full" />
+            ) : session?.user ? (
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center space-x-1"
+                >
+                  <UserIcon className="h-6 w-6" />
+                  <span className="hidden sm:block text-sm font-medium">
+                    {session.user.name?.split(' ')[0]}
+                  </span>
+                  <ChevronDownIcon className="h-4 w-4" />
+                </Button>
+                
+                {userMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-primary-200 z-50">
+                    <div className="py-1">
+                      <Link
+                        href="/account"
+                        className="block px-4 py-2 text-sm text-primary-700 hover:bg-primary-50"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        My Account
+                      </Link>
+                      <Link
+                        href="/orders"
+                        className="block px-4 py-2 text-sm text-primary-700 hover:bg-primary-50"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        My Orders
+                      </Link>
+                      {session.user.role === 'ADMIN' && (
+                        <Link
+                          href="/admin"
+                          className="block px-4 py-2 text-sm text-primary-700 hover:bg-primary-50"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          Admin Panel
+                        </Link>
+                      )}
+                      <hr className="my-1 border-primary-200" />
+                      <button
+                        onClick={handleSignOut}
+                        className="block w-full text-left px-4 py-2 text-sm text-primary-700 hover:bg-primary-50"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Link href="/auth/signin">
+                  <Button variant="ghost" size="sm">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/auth/signup">
+                  <Button size="sm">
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
+            )}
 
             {/* Shopping bag */}
             <Link href="/cart">
@@ -148,16 +217,67 @@ export default function Header() {
                 </Link>
               ))}
               <div className="pt-4 border-t border-primary-200">
-                <Link
-                  href="/account"
-                  className="block text-lg font-medium text-primary-700 hover:text-primary-900 mb-4"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Account
-                </Link>
+                {session?.user ? (
+                  <>
+                    <div className="mb-4 px-4 py-2 bg-primary-50 rounded-md">
+                      <p className="text-sm font-medium text-primary-900">
+                        Welcome, {session.user.name}
+                      </p>
+                      <p className="text-xs text-primary-600">
+                        {session.user.email}
+                      </p>
+                    </div>
+                    <Link
+                      href="/account"
+                      className="block text-lg font-medium text-primary-700 hover:text-primary-900 mb-4"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      My Account
+                    </Link>
+                    <Link
+                      href="/orders"
+                      className="block text-lg font-medium text-primary-700 hover:text-primary-900 mb-4"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      My Orders
+                    </Link>
+                    {session.user.role === 'ADMIN' && (
+                      <Link
+                        href="/admin"
+                        className="block text-lg font-medium text-primary-700 hover:text-primary-900 mb-4"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Admin Panel
+                      </Link>
+                    )}
+                    <button
+                      onClick={handleSignOut}
+                      className="block text-lg font-medium text-red-600 hover:text-red-800 mb-4"
+                    >
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <div className="space-y-4">
+                    <Link
+                      href="/auth/signin"
+                      className="block text-lg font-medium text-primary-700 hover:text-primary-900"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/auth/signup"
+                      className="block text-lg font-medium bg-primary-900 text-white px-4 py-2 rounded-md hover:bg-primary-800"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
                 <Link
                   href="/cart"
-                  className="block text-lg font-medium text-primary-700 hover:text-primary-900"
+                  className="block text-lg font-medium text-primary-700 hover:text-primary-900 mt-4"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Cart (3)

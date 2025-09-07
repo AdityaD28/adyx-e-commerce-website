@@ -2,40 +2,59 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import ProductCard from '@/components/products/ProductCard'
 
 // Mock data for featured products - will be replaced with actual database calls
 const featuredProducts = [
   {
     id: '1',
-    name: 'Elegant Black Midi Dress',
-    price: 129.99,
-    comparePrice: 149.99,
-    image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&h=800&fit=crop',
-    href: '/products/elegant-black-midi-dress',
+    name: 'Premium Cotton T-Shirt',
+    price: 49.99,
+    originalPrice: 69.99,
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=600&fit=crop',
+    category: 'clothing',
+    rating: 4.5,
+    reviewCount: 124,
+    sizes: ['XS', 'S', 'M', 'L', 'XL'],
+    colors: ['Black', 'White', 'Navy', 'Gray'],
+    stock: 50
   },
   {
     id: '2',
-    name: 'Classic White Button Shirt',
-    price: 79.99,
-    comparePrice: 99.99,
-    image: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&h=800&fit=crop',
-    href: '/products/classic-white-button-shirt',
+    name: 'Classic Denim Jacket',
+    price: 129.99,
+    image: 'https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=500&h=600&fit=crop',
+    category: 'outerwear',
+    rating: 4.8,
+    reviewCount: 89,
+    sizes: ['S', 'M', 'L', 'XL'],
+    colors: ['Blue', 'Black', 'Light Blue'],
+    stock: 25
   },
   {
     id: '3',
-    name: 'Leather Crossbody Bag',
-    price: 159.99,
-    comparePrice: 199.99,
-    image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&h=800&fit=crop',
-    href: '/products/leather-crossbody-bag',
+    name: 'Minimalist Sneakers',
+    price: 89.99,
+    image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&h=600&fit=crop',
+    category: 'shoes',
+    rating: 4.6,
+    reviewCount: 203,
+    sizes: ['7', '8', '9', '10', '11', '12'],
+    colors: ['White', 'Black', 'Gray'],
+    stock: 75
   },
   {
     id: '4',
-    name: 'Classic Sunglasses',
-    price: 89.99,
-    image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&h=800&fit=crop',
-    href: '/products/classic-sunglasses',
-  },
+    name: 'Luxury Leather Handbag',
+    price: 199.99,
+    originalPrice: 249.99,
+    image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=500&h=600&fit=crop',
+    category: 'accessories',
+    rating: 4.9,
+    reviewCount: 67,
+    colors: ['Brown', 'Black', 'Tan'],
+    stock: 15
+  }
 ]
 
 const categories = [
@@ -142,33 +161,7 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredProducts.map((product) => (
-            <Card key={product.id} className="group hover:shadow-lg transition-shadow duration-300">
-              <Link href={product.href}>
-                <div className="aspect-[3/4] relative overflow-hidden rounded-t-lg">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-primary-900 mb-2 line-clamp-2">
-                    {product.name}
-                  </h3>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-lg font-bold text-primary-900">
-                      ${product.price}
-                    </span>
-                    {product.comparePrice && (
-                      <span className="text-sm text-primary-500 line-through">
-                        ${product.comparePrice}
-                      </span>
-                    )}
-                  </div>
-                </CardContent>
-              </Link>
-            </Card>
+            <ProductCard key={product.id} product={product} variant="featured" />
           ))}
         </div>
 

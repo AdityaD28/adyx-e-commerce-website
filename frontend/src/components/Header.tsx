@@ -6,6 +6,8 @@ import { useSession, signOut } from 'next-auth/react'
 import { ShoppingBagIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
+import { useCartStore } from '@/stores/cart'
+import CartSidebar from './cart/CartSidebar'
 
 const navigation = [
   { name: 'Women', href: '/categories/women' },
@@ -19,6 +21,7 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const { data: session, status } = useSession()
+  const { toggleCart, getTotalItems } = useCartStore()
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: '/' })
@@ -164,15 +167,20 @@ export default function Header() {
             )}
 
             {/* Shopping bag */}
-            <Link href="/cart">
-              <Button variant="ghost" size="icon" aria-label="Shopping cart" className="relative">
-                <ShoppingBagIcon className="h-6 w-6" />
-                {/* Cart count badge */}
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-accent-500 text-xs font-medium text-white flex items-center justify-center">
-                  3
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleCart}
+              aria-label="Shopping cart" 
+              className="relative"
+            >
+              <ShoppingBagIcon className="h-6 w-6" />
+              {getTotalItems() > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-accent-500 text-xs font-medium text-white flex items-center justify-center">
+                  {getTotalItems()}
                 </span>
-              </Button>
-            </Link>
+              )}
+            </Button>
           </div>
         </div>
 
@@ -280,13 +288,16 @@ export default function Header() {
                   className="block text-lg font-medium text-primary-700 hover:text-primary-900 mt-4"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Cart (3)
+                  Cart ({getTotalItems()})
                 </Link>
               </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* Cart Sidebar */}
+      <CartSidebar />
     </header>
   )
 }

@@ -1,0 +1,22 @@
+{
+  "name": "adyx-db",
+  "version": "1.0.0",
+  "description": "Database schema and seeding for AdyX e-commerce platform",
+  "scripts": {
+    "generate": "prisma generate",
+    "migrate": "prisma migrate dev",
+    "studio": "prisma studio",
+    "seed": "tsx seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.1",
+    "bcryptjs": "^2.4.3"
+  },
+  "devDependencies": {
+    "prisma": "^5.7.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.10.0"
+  }
+}

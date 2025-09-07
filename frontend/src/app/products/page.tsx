@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline'
+import ProductCard from '@/components/products/ProductCard'
 
 // Mock data - will be replaced with actual database calls
 const products = [
@@ -14,34 +15,39 @@ const products = [
     id: '1',
     name: 'Elegant Black Midi Dress',
     price: 129.99,
-    comparePrice: 149.99,
+    originalPrice: 149.99,
     image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&h=800&fit=crop',
     category: 'women',
+    rating: 4.5,
+    reviewCount: 124,
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
     colors: ['Black'],
-    inStock: true,
+    stock: 25,
   },
   {
     id: '2',
     name: 'Classic White Button Shirt',
     price: 79.99,
-    comparePrice: 99.99,
+    originalPrice: 99.99,
     image: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&h=800&fit=crop',
     category: 'men',
+    rating: 4.7,
+    reviewCount: 89,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     colors: ['White', 'Blue'],
-    inStock: true,
+    stock: 40,
   },
   {
     id: '3',
     name: 'Leather Crossbody Bag',
     price: 159.99,
-    comparePrice: 199.99,
+    originalPrice: 199.99,
     image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&h=800&fit=crop',
     category: 'accessories',
-    sizes: ['One Size'],
+    rating: 4.8,
+    reviewCount: 156,
     colors: ['Brown', 'Black'],
-    inStock: true,
+    stock: 15,
   },
   {
     id: '4',
@@ -49,20 +55,23 @@ const products = [
     price: 89.99,
     image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&h=800&fit=crop',
     category: 'accessories',
-    sizes: ['One Size'],
+    rating: 4.6,
+    reviewCount: 203,
     colors: ['Black', 'Tortoise'],
-    inStock: true,
+    stock: 30,
   },
   {
     id: '5',
     name: 'Floral Summer Dress',
     price: 89.99,
-    comparePrice: 109.99,
+    originalPrice: 109.99,
     image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&h=800&fit=crop',
     category: 'women',
+    rating: 4.4,
+    reviewCount: 78,
     sizes: ['XS', 'S', 'M', 'L'],
     colors: ['Floral'],
-    inStock: true,
+    stock: 20,
   },
   {
     id: '6',
@@ -70,9 +79,11 @@ const products = [
     price: 69.99,
     image: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3ccf?w=600&h=800&fit=crop',
     category: 'men',
+    rating: 4.3,
+    reviewCount: 92,
     sizes: ['S', 'M', 'L', 'XL'],
     colors: ['Blue', 'Light Blue'],
-    inStock: true,
+    stock: 35,
   },
 ]
 
@@ -263,70 +274,7 @@ export default function ProductsPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
-              <Card key={product.id} className="group hover:shadow-lg transition-shadow duration-300">
-                <Link href={`/products/${product.id}`}>
-                  <div className="aspect-[3/4] relative overflow-hidden rounded-t-lg">
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    {product.comparePrice && (
-                      <div className="absolute top-2 left-2 bg-accent-500 text-primary-900 px-2 py-1 rounded text-xs font-medium">
-                        Sale
-                      </div>
-                    )}
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold text-primary-900 mb-2 line-clamp-2">
-                      {product.name}
-                    </h3>
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className="text-lg font-bold text-primary-900">
-                        ${product.price}
-                      </span>
-                      {product.comparePrice && (
-                        <span className="text-sm text-primary-500 line-through">
-                          ${product.comparePrice}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap gap-1 mb-2">
-                      {product.sizes.map((size) => (
-                        <span
-                          key={size}
-                          className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded"
-                        >
-                          {size}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex space-x-1">
-                        {product.colors.map((color, index) => (
-                          <div
-                            key={color}
-                            className="w-4 h-4 rounded-full border border-primary-300"
-                            style={{
-                              backgroundColor: color.toLowerCase() === 'white' ? '#fff' :
-                                             color.toLowerCase() === 'black' ? '#000' :
-                                             color.toLowerCase() === 'blue' ? '#3b82f6' :
-                                             color.toLowerCase() === 'brown' ? '#a16207' :
-                                             color.toLowerCase() === 'tortoise' ? '#a16207' :
-                                             '#e5e7eb'
-                            }}
-                            title={color}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-xs text-primary-600">
-                        {product.colors.length} color{product.colors.length > 1 ? 's' : ''}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Link>
-              </Card>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         )}

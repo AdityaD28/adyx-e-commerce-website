@@ -1,210 +1,253 @@
-# AdyX E-commerce Platform
+# AdyX E-commerce - README
 
-A modern, production-ready e-commerce website inspired by ZARA's minimalist design. Built with Next.js, TypeScript, Tailwind CSS, PostgreSQL, and Stripe payments.
+A modern, production-ready e-commerce platform built with Next.js, inspired by ZARA's design philosophy.
 
-## 🌟 Features
+## 🚀 Features
 
-- **Modern Frontend**: Next.js 14 with TypeScript and Tailwind CSS
-- **Secure Payments**: Stripe integration with webhook support
-- **Admin Dashboard**: Complete product and order management
-- **Authentication**: NextAuth.js with customer and admin roles
+### Core E-commerce Features
+- **Product Catalog**: Browse products with advanced filtering and search
+- **Shopping Cart**: Persistent cart with quantity management
+- **Secure Checkout**: Stripe integration for payment processing
+- **User Authentication**: Sign up, sign in, and profile management
+- **Order Management**: Complete order tracking and history
+- **Admin Panel**: Comprehensive product and order management
+
+### Technical Features
+- **Modern Stack**: Next.js 15, TypeScript, Tailwind CSS
 - **Database**: PostgreSQL with Prisma ORM
-- **Search & Filters**: Product search with category and price filters
-- **Responsive Design**: Mobile-first responsive design
-- **SEO Optimized**: Meta tags, structured data, and sitemap
-- **Performance**: Image optimization and lazy loading
-- **Accessibility**: ARIA attributes and keyboard navigation
+- **Authentication**: NextAuth.js v5 with role-based access
+- **Payments**: Stripe integration with webhooks
+- **State Management**: Zustand for cart persistence
+- **Responsive Design**: Mobile-first approach
+- **Production Ready**: Docker deployment with SSL support
 
-## 🚀 Quick Start
+## �️ Technology Stack
 
-### Prerequisites
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS v4, Headless UI
+- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: NextAuth.js v5
+- **Payments**: Stripe
+- **State Management**: Zustand
+- **Deployment**: Docker, Nginx, Let's Encrypt
+- **Development**: Turbopack, ESLint
 
-- Node.js 18+ and npm/pnpm
-- PostgreSQL database
-- Stripe account for payments
-
-### 1. Clone and Install
-
-```bash
-git clone <repository-url>
-cd adyx-ecommerce
-npm install
-```
-
-### 2. Environment Setup
-
-Copy the example environment file and configure your settings:
-
-```bash
-cp .env.example .env.local
-```
-
-Fill in your environment variables (see Configuration section below).
-
-### 3. Database Setup
-
-```bash
-# Generate Prisma client
-npm run prisma:generate
-
-# Run database migrations
-npm run prisma:migrate
-
-# Seed with sample data
-npm run seed
-```
-
-### 4. Start Development
-
-```bash
-npm run dev
-```
-
-Visit http://localhost:3000 to see your application.
-
-## 📁 Project Structure
+## � Project Structure
 
 ```
 adyx-ecommerce/
-├── frontend/           # Next.js frontend application
-│   ├── app/           # App router pages and layouts
-│   ├── components/    # Reusable React components
-│   ├── lib/          # Utility functions and configurations
-│   └── public/       # Static assets
-├── backend/          # Express.js API server (if needed)
-├── db/              # Database schema and migrations
-│   ├── prisma/      # Prisma schema and migrations
-│   └── seed.ts      # Database seeding script
-├── infra/           # Docker and deployment configs
-└── scripts/         # Build and deployment scripts
+├── frontend/                 # Next.js application
+│   ├── src/
+│   │   ├── app/             # App router pages
+│   │   ├── components/      # Reusable components
+│   │   ├── lib/             # Utility functions
+│   │   └── stores/          # Zustand stores
+│   ├── prisma/              # Database schema and migrations
+│   └── public/              # Static assets
+├── scripts/                 # Deployment and management scripts
+├── nginx/                   # Nginx configuration
+├── docker-compose.yml       # Docker services
+├── Dockerfile              # Application container
+└── DEPLOYMENT.md           # Detailed deployment guide
 ```
 
-## ⚙️ Configuration
+## 🚀 Quick Start
 
-### Required Environment Variables
+### Development Setup
 
-Create a `.env.local` file in the root directory with the following variables:
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd adyx-ecommerce
+   ```
 
-```env
-# Database
-DATABASE_URL="postgresql://username:password@localhost:5432/adyx_ecommerce"
+2. **Start the database**:
+   ```bash
+   docker-compose up -d postgres redis
+   ```
 
-# NextAuth.js
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-secret-key-here"
+3. **Setup the frontend**:
+   ```bash
+   cd frontend
+   npm install
+   cp .env.example .env.local
+   # Edit .env.local with your configuration
+   ```
 
-# Stripe
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
-STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_WEBHOOK_SECRET="whsec_..."
+4. **Setup the database**:
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   npx prisma db seed
+   ```
 
-# Email (SendGrid)
-SENDGRID_API_KEY="SG...."
-FROM_EMAIL="noreply@adyx.com"
+5. **Start the development server**:
+   ```bash
+   npm run dev
+   ```
 
-# Admin
-ADMIN_EMAIL="admin@adyx.com"
-ADMIN_PASSWORD="secure_password_here"
+Visit [http://localhost:3001](http://localhost:3001) to see the application.
+
+### Production Deployment
+
+For production deployment, see the detailed [DEPLOYMENT.md](./DEPLOYMENT.md) guide.
+
+Quick production start:
+```bash
+# Copy and configure environment
+cp .env.production.example .env.production
+# Edit .env.production with your values
+
+# Deploy with Docker
+./scripts/deploy.sh
 ```
 
-### Stripe Setup
+## 🔧 Configuration
 
-1. Create a Stripe account at https://stripe.com
-2. Get your API keys from the Stripe Dashboard
-3. Set up webhooks for your application:
-   - Endpoint: `https://your-domain.com/api/webhooks/stripe`
-   - Events: `checkout.session.completed`, `payment_intent.succeeded`
+### Environment Variables
 
-### Email Setup (SendGrid)
-
-1. Create a SendGrid account
-2. Generate an API key
-3. Verify your sender email domain
-
-## 🛠️ Development
-
-### Available Scripts
-
-- `npm run dev` - Start development servers
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run test` - Run tests
-- `npm run seed` - Seed database with sample data
-
-### Creating an Admin User
-
-After seeding the database, you can log in with the admin credentials defined in your environment variables.
-
-### Testing Payments
-
-Use Stripe's test card numbers:
-- Successful payment: `4242 4242 4242 4242`
-- Declined payment: `4000 0000 0000 0002`
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-
-1. Connect your GitHub repository to Vercel
-2. Set environment variables in Vercel dashboard
-3. Deploy automatically on push to main branch
-
-### Docker
+Create `.env.local` for development or `.env.production` for production:
 
 ```bash
-# Build and run with Docker Compose
-docker-compose up --build
+# Database
+DATABASE_URL="postgresql://postgres:postgres@localhost:5434/adyx_ecommerce"
+
+# NextAuth.js
+NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_URL="http://localhost:3001"
+
+# Stripe
+STRIPE_SECRET_KEY="sk_test_your_stripe_secret_key"
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_your_stripe_publishable_key"
+STRIPE_WEBHOOK_SECRET="whsec_your_webhook_secret"
 ```
 
-### Manual Deployment
+### Database Configuration
 
-1. Build the application: `npm run build`
-2. Set up PostgreSQL database
-3. Configure environment variables
-4. Start the application: `npm run start`
+The application uses PostgreSQL with Prisma. Key commands:
 
-## 📚 API Documentation
+```bash
+# Generate Prisma client
+npx prisma generate
 
-API documentation is available at `/api/docs` when running in development mode.
+# Push schema to database
+npx prisma db push
 
-### Key Endpoints
+# Run migrations
+npx prisma migrate dev
 
-- `POST /api/auth/*` - Authentication endpoints
-- `GET /api/products` - Product listing with filters
-- `POST /api/checkout/create-session` - Create Stripe checkout session
-- `POST /api/webhooks/stripe` - Stripe webhook handler
-- `GET /api/admin/*` - Admin panel endpoints
+# Seed database
+npx prisma db seed
+
+# Open Prisma Studio
+npx prisma studio
+```
+
+## 📱 Features Overview
+
+### Customer Features
+- **Homepage**: Hero section, featured products, categories
+- **Product Catalog**: Grid/list view, filters, search, pagination
+- **Product Details**: Image gallery, size/color selection, reviews
+- **Shopping Cart**: Add/remove items, quantity management
+- **Checkout**: Guest/registered checkout, Stripe payment
+- **User Account**: Profile management, order history
+- **Authentication**: Sign up, sign in, password reset
+
+### Admin Features
+- **Dashboard**: Sales overview, analytics, quick stats
+- **Product Management**: CRUD operations, inventory tracking
+- **Order Management**: Order processing, status updates
+- **User Management**: Customer overview, role management
+- **Analytics**: Sales reports, popular products
+
+### Technical Features
+- **Responsive Design**: Works on all devices
+- **Performance**: Optimized images, caching, lazy loading
+- **Security**: HTTPS, CSP headers, input validation
+- **SEO**: Meta tags, structured data, sitemap
+- **Monitoring**: Health checks, error tracking
+- **Scalability**: Horizontal scaling ready
+
+## 🎨 Design System
+
+### Color Palette
+- **Primary**: Black (#000000) - Main brand color
+- **Secondary**: White (#FFFFFF) - Background and contrast
+- **Accent**: Gray tones for text and borders
+- **Interactive**: Hover states and active elements
+
+### Typography
+- **Headings**: Bold, clean sans-serif
+- **Body**: Readable font with proper line height
+- **Buttons**: Consistent styling across the platform
+
+### Components
+- **Buttons**: Primary, secondary, outline variants
+- **Forms**: Clean inputs with validation states
+- **Cards**: Product cards, info cards
+- **Navigation**: Header, footer, breadcrumbs
+
+## 🔒 Security
+
+- **Authentication**: Secure session management
+- **Authorization**: Role-based access control
+- **Data Protection**: Input validation, sanitization
+- **HTTPS**: SSL/TLS encryption
+- **Rate Limiting**: API endpoint protection
+- **Security Headers**: XSS, CSRF protection
+
+## 📊 Performance
+
+- **Core Web Vitals**: Optimized for Google's metrics
+- **Image Optimization**: Next.js Image component
+- **Code Splitting**: Automatic route-based splitting
+- **Caching**: Redis for sessions, CDN for static assets
+- **Database**: Optimized queries with Prisma
 
 ## 🧪 Testing
 
 ```bash
-# Run all tests
-npm run test
+# Run tests
+npm test
 
 # Run tests in watch mode
 npm run test:watch
 
-# Run tests with coverage
-npm run test:coverage
+# Run E2E tests
+npm run test:e2e
 ```
 
-## 📋 TODO
+## � API Documentation
 
-- [ ] Implement advanced search with Algolia
-- [ ] Add product reviews and ratings
-- [ ] Implement wishlist functionality
-- [ ] Add multi-language support
-- [ ] Set up analytics tracking
-- [ ] Implement advanced inventory management
+### Authentication
+- `POST /api/auth/signin` - User sign in
+- `POST /api/auth/signup` - User registration
+- `POST /api/auth/signout` - User sign out
+
+### Products
+- `GET /api/products` - Get products with filters
+- `GET /api/products/[id]` - Get single product
+- `POST /api/products` - Create product (admin)
+- `PUT /api/products/[id]` - Update product (admin)
+- `DELETE /api/products/[id]` - Delete product (admin)
+
+### Orders
+- `GET /api/orders` - Get user orders
+- `POST /api/orders` - Create new order
+- `GET /api/orders/[id]` - Get single order
+
+### Stripe
+- `POST /api/stripe/checkout` - Create checkout session
+- `POST /api/stripe/webhook` - Handle Stripe webhooks
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
 
 ## 📄 License
 
@@ -212,4 +255,44 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-For support, email support@adyx.com or create an issue in the GitHub repository.
+- **Documentation**: Check [DEPLOYMENT.md](./DEPLOYMENT.md) for deployment help
+- **Issues**: Open an issue on GitHub
+- **Discussions**: Use GitHub Discussions for questions
+
+## 🗺️ Roadmap
+
+### Phase 1 (Completed) ✅
+- [x] Basic e-commerce functionality
+- [x] User authentication
+- [x] Shopping cart
+- [x] Stripe integration
+- [x] Admin panel
+- [x] Docker deployment
+
+### Phase 2 (Future)
+- [ ] Advanced search with Elasticsearch
+- [ ] Product reviews and ratings
+- [ ] Wishlist functionality
+- [ ] Email notifications
+- [ ] Inventory management
+- [ ] Multi-language support
+- [ ] Social authentication
+- [ ] Progressive Web App (PWA)
+
+### Phase 3 (Future)
+- [ ] Multi-vendor support
+- [ ] Advanced analytics
+- [ ] AI-powered recommendations
+- [ ] Mobile app
+- [ ] International shipping
+- [ ] Subscription products
+
+## � Acknowledgments
+
+- Design inspiration from ZARA
+- Built with amazing open-source technologies
+- Community feedback and contributions
+
+---
+
+**AdyX E-commerce** - Building the future of online retail 🛍️

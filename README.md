@@ -86,7 +86,7 @@ A full-stack e-commerce platform built with Next.js 15, featuring a complete sho
 4. **Configure environment variables in .env.local**
    ```bash
    # Database
-   DATABASE_URL="postgresql://postgres:postgres@localhost:5434/adyx_ecommerce"
+   DATABASE_URL="your_databse_url"
 
    # NextAuth.js
    NEXTAUTH_SECRET="your-super-secret-key-min-32-chars-long"
@@ -325,14 +325,8 @@ Ensure all required environment variables are set:
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Support
+## Developed By
 
-For support and questions, please open an issue in the repository or contact the development team.
-
-## Acknowledgments
-
-- Next.js team for the excellent framework
-- Stripe for payment processing
-- Prisma for database management
-- Tailwind CSS for styling system
-- All contributors to the open-source libraries used
+* **Aditya Dasappanavar**
+* **GitHub:** [AdityaD28](https://github.com/AdityaD28)
+* **LinkedIn:** [adityadasappanavar](https://www.linkedin.com/in/adityadasappanavar/)

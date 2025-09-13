@@ -12,12 +12,13 @@
   --font-serif: var(--font-playfair);
 }
 
-@media (prefers-color-scheme: dark) {
+/* Remove dark mode auto-switching for now */
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0f172a;
     --foreground: #f8fafc;
   }
-}
+} */
 
 body {
   background: var(--background);
@@ -47,6 +48,35 @@ body {
 .focus-visible:focus-visible {
   outline: 2px solid #334155;
   outline-offset: 2px;
+}
+
+/* Cart button force styling */
+.cart-button-force {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 3px solid #000000 !important;
+  font-weight: bold !important;
+  font-size: 18px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  min-height: 56px !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+}
+
+.cart-button-force:hover {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+}
+
+.cart-button-force:disabled {
+  background-color: #6b7280 !important;
+  color: #ffffff !important;
+  border: 3px solid #6b7280 !important;
+}
+
+/* Force all nested elements to inherit colors */
+.cart-button-force * {
+  color: #ffffff !important;
 }
 
 /* Animation classes */

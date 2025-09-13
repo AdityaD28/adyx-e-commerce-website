@@ -1,0 +1,8 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#e3f2fd"/>
+  <rect x="50" y="50" width="700" height="500" fill="#bbdefb" stroke="#2196f3" stroke-width="3"/>
+  <text x="400" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" fill="#1565c0">Men's</text>
+  <text x="400" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#1976d2">Collection</text>
+  <text x="400" y="360" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#1976d2">Shop premium menswear</text>
+  <text x="400" y="400" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1976d2">800 × 600 - Replace with actual category image</text>
+</svg>

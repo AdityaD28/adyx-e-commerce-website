@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import CartSidebar from "@/components/cart/CartSidebar";
 import SessionProviderWrapper from "@/components/providers/SessionProvider";
 
 const inter = Inter({
@@ -65,6 +66,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <CartSidebar />
         </SessionProviderWrapper>
       </body>
     </html>

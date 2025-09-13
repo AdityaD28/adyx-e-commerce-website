@@ -21,13 +21,34 @@ interface OrderDetails {
 export default function CheckoutSuccessPage() {
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isMockMode, setIsMockMode] = useState(false)
   const searchParams = useSearchParams()
   const router = useRouter()
   const { clearCart } = useCartStore()
 
   const sessionId = searchParams.get('session_id')
+  const mockMode = searchParams.get('mock')
 
   useEffect(() => {
+    // Handle mock mode
+    if (mockMode === 'true') {
+      setIsMockMode(true)
+      setOrderDetails({
+        id: 'MOCK_ORDER_12345',
+        total: 161.99,
+        status: 'completed',
+        items: [
+          {
+            name: 'Elegant Black Midi Dress',
+            quantity: 1,
+            price: 149.99
+          }
+        ]
+      })
+      setIsLoading(false)
+      return
+    }
+
     if (!sessionId) {
       router.push('/')
       return
@@ -42,18 +63,19 @@ export default function CheckoutSuccessPage() {
           setOrderDetails(data.order)
           clearCart() // Clear the cart after successful payment
         } else {
-          router.push('/checkout')
+          console.error('Order fetch failed:', data.error)
+          router.push('/checkout?error=payment_failed')
         }
       } catch (error) {
         console.error('Error fetching order details:', error)
-        router.push('/checkout')
+        router.push('/checkout?error=network_error')
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchOrderDetails()
-  }, [sessionId, router, clearCart])
+  }, [sessionId, mockMode, router, clearCart])
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -101,6 +123,13 @@ export default function CheckoutSuccessPage() {
           <p className="text-primary-600">
             Thank you for your purchase. Your order has been successfully placed.
           </p>
+          {isMockMode && (
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+              <p className="text-sm text-blue-700">
+                <strong>Demo Mode:</strong> This is a simulated payment. No actual transaction was processed.
+              </p>
+            </div>
+          )}
         </div>
 
         <Card className="mb-8">

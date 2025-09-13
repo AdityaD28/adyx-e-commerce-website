@@ -3,7 +3,7 @@
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
-import { useCartStore } from '@/stores/cart'
+import { useCartHydration } from '@/hooks/useCartHydration'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -16,8 +16,10 @@ export default function CartSidebar() {
     updateQuantity, 
     removeItem, 
     getTotalPrice,
-    getTotalItems 
-  } = useCartStore()
+    getTotalItems,
+    isHydrated,
+    clearCart
+  } = useCartHydration()
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -57,14 +59,14 @@ export default function CartSidebar() {
                   <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                     <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                       <div className="flex items-start justify-between">
-                        <Dialog.Title className="text-lg font-medium text-primary-900">
-                          Shopping Cart ({getTotalItems()})
+                                                <Dialog.Title className="text-lg font-medium text-gray-900">
+                          Shopping cart
                         </Dialog.Title>
                         <div className="ml-3 flex h-7 items-center">
                           <button
                             type="button"
-                            className="-m-2 p-2 text-primary-400 hover:text-primary-500"
-                            onClick={toggleCart}
+                            onClick={() => toggleCart()}
+                            className="-m-2 p-2 text-gray-400 hover:text-gray-500"
                           >
                             <span className="sr-only">Close panel</span>
                             <XMarkIcon className="h-6 w-6" aria-hidden="true" />
@@ -74,42 +76,50 @@ export default function CartSidebar() {
 
                       <div className="mt-8">
                         <div className="flow-root">
-                          {items.length === 0 ? (
+                          {!isHydrated || items.length === 0 ? (
                             <div className="text-center py-12">
-                              <div className="w-16 h-16 mx-auto mb-4 bg-primary-100 rounded-full flex items-center justify-center">
-                                <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                                 </svg>
                               </div>
-                              <h3 className="text-primary-900 font-medium mb-2">Your cart is empty</h3>
-                              <p className="text-primary-600 text-sm mb-6">
-                                Add some products to get started
+                              <h3 className="text-gray-900 font-medium mb-2">
+                                {!isHydrated ? 'Loading...' : 'Your cart is empty'}
+                              </h3>
+                              <p className="text-gray-600 text-sm mb-6">
+                                {!isHydrated ? 'Please wait' : 'Add some products to get started'}
                               </p>
-                              <Link href="/products" onClick={toggleCart}>
-                                <Button>Continue Shopping</Button>
-                              </Link>
+                              {isHydrated && (
+                                <Link href="/products" onClick={toggleCart}>
+                                  <Button>Continue Shopping</Button>
+                                </Link>
+                              )}
                             </div>
                           ) : (
-                            <ul role="list" className="-my-6 divide-y divide-primary-200">
+                            <ul role="list" className="-my-6 divide-y divide-gray-200">
                               {items.map((item) => (
                                 <li key={item.id} className="flex py-6">
-                                  <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-primary-200">
+                                  <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                     <Image
-                                      src={item.image}
+                                      src={item.image?.startsWith('http') ? '/images/placeholder.svg' : item.image || '/images/placeholder.svg'}
                                       alt={item.name}
                                       width={96}
                                       height={96}
                                       className="h-full w-full object-cover object-center"
+                                      onError={(e) => {
+                                        const target = e.target as HTMLImageElement;
+                                        target.src = '/images/placeholder.svg';
+                                      }}
                                     />
                                   </div>
 
                                   <div className="ml-4 flex flex-1 flex-col">
                                     <div>
-                                      <div className="flex justify-between text-base font-medium text-primary-900">
+                                      <div className="flex justify-between text-base font-medium text-gray-900">
                                         <h3 className="text-sm">{item.name}</h3>
                                         <p className="ml-4">{formatPrice(item.price)}</p>
                                       </div>
-                                      <div className="mt-1 text-sm text-primary-500 space-x-2">
+                                      <div className="mt-1 text-sm text-gray-500 space-x-2">
                                         {item.color && <span>Color: {item.color}</span>}
                                         {item.size && <span>Size: {item.size}</span>}
                                       </div>
@@ -118,17 +128,17 @@ export default function CartSidebar() {
                                       <div className="flex items-center space-x-2">
                                         <button
                                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                          className="p-1 rounded-md hover:bg-primary-100"
+                                          className="p-1 rounded-md hover:bg-gray-100"
                                           disabled={item.quantity <= 1}
                                         >
                                           <MinusIcon className="h-4 w-4" />
                                         </button>
-                                        <span className="text-primary-700 font-medium min-w-[2rem] text-center">
+                                        <span className="text-gray-700 font-medium min-w-[2rem] text-center">
                                           {item.quantity}
                                         </span>
                                         <button
                                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                          className="p-1 rounded-md hover:bg-primary-100"
+                                          className="p-1 rounded-md hover:bg-gray-100"
                                           disabled={item.quantity >= item.maxQuantity}
                                         >
                                           <PlusIcon className="h-4 w-4" />
@@ -154,32 +164,62 @@ export default function CartSidebar() {
                       </div>
                     </div>
 
-                    {items.length > 0 && (
-                      <div className="border-t border-primary-200 px-4 py-6 sm:px-6">
-                        <div className="flex justify-between text-base font-medium text-primary-900">
+                    {isHydrated && items.length > 0 && (
+                      <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+                        <div className="flex justify-between text-base font-medium text-gray-900">
                           <p>Subtotal</p>
                           <p>{formatPrice(getTotalPrice())}</p>
                         </div>
-                        <p className="mt-0.5 text-sm text-primary-500">
+                        <p className="mt-0.5 text-sm text-gray-500">
                           Shipping and taxes calculated at checkout.
                         </p>
                         <div className="mt-6">
                           <Link href="/checkout" onClick={toggleCart}>
-                            <Button className="w-full">
+                            <button
+                              className="w-full cart-button-force"
+                              style={{
+                                backgroundColor: '#000000',
+                                color: '#ffffff',
+                                border: '3px solid #000000',
+                                borderRadius: '6px',
+                                padding: '16px 32px',
+                                fontSize: '18px',
+                                fontWeight: 'bold',
+                                textTransform: 'uppercase',
+                                letterSpacing: '1px',
+                                minHeight: '56px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease-in-out',
+                                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+                                width: '100%',
+                                textAlign: 'center'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = '#374151'
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = '#000000'
+                              }}
+                            >
                               Checkout
-                            </Button>
+                            </button>
                           </Link>
                         </div>
-                        <div className="mt-6 flex justify-center text-center text-sm text-primary-500">
+                        <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                           <p>
                             or{' '}
                             <button
                               type="button"
-                              className="font-medium text-accent-600 hover:text-accent-500"
+                              className="font-medium text-black hover:text-gray-700 underline"
                               onClick={toggleCart}
+                              style={{ 
+                                fontSize: '16px', 
+                                fontWeight: 'bold',
+                                color: '#000000'
+                              }}
                             >
                               Continue Shopping
-                              <span aria-hidden="true"> &rarr;</span>
+                              <span aria-hidden="true"> →</span>
                             </button>
                           </p>
                         </div>

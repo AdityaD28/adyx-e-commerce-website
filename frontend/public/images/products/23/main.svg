@@ -1,0 +1,8 @@
+<svg width="600" height="800" xmlns="http://www.w3.org/2000/svg">
+  <rect width="600" height="800" fill="#e3f2fd"/>
+  <rect x="50" y="50" width="500" height="700" fill="#bbdefb" stroke="#2196f3" stroke-width="2"/>
+  <text x="300" y="350" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#1565c0">Product 23</text>
+  <text x="300" y="380" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#1976d2">Cotton Polo Shirt</text>
+  <text x="300" y="420" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1976d2">Men's Collection</text>
+  <text x="300" y="450" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1976d2">Replace with actual product image</text>
+</svg>

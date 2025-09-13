@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 import { useCartStore } from '@/stores/cart'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -27,6 +28,7 @@ export default function CheckoutPage() {
   const { items, getTotalPrice, getTotalItems, clearCart } = useCartStore()
   
   const [isLoading, setIsLoading] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
   const [error, setError] = useState('')
   const [form, setForm] = useState<CheckoutForm>({
     email: session?.user?.email || '',
@@ -40,10 +42,10 @@ export default function CheckoutPage() {
   })
 
   useEffect(() => {
-    if (items.length === 0) {
+    if (items.length === 0 && !isRedirecting) {
       router.push('/products')
     }
-  }, [items, router])
+  }, [items, router, isRedirecting])
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -71,7 +73,7 @@ export default function CheckoutPage() {
     }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
@@ -89,39 +91,107 @@ export default function CheckoutPage() {
             name: item.name,
             price: item.price,
             quantity: item.quantity,
-            image: item.image
+            image: item.image,
+            size: item.size,
+            color: item.color
           })),
           customerInfo: form,
           userId: session?.user?.id
         })
       })
 
-      const { sessionId, error: checkoutError } = await response.json()
+      const data = await response.json()
+      const { sessionId, mockMode, realPayment, setupRequired, error: checkoutError, instructions } = data
 
       if (checkoutError) {
-        setError(checkoutError)
+        if (setupRequired) {
+          setError(`${checkoutError}\n\nTo enable real payments:\n1. ${instructions.step1}\n2. ${instructions.step2}\n3. ${instructions.step3}\n4. ${instructions.step4}`)
+        } else {
+          setError(checkoutError)
+        }
         setIsLoading(false)
         return
       }
 
-      // Redirect to Stripe Checkout
-      const stripe = await getStripe()
-      const { error: stripeError } = await stripe!.redirectToCheckout({
-        sessionId
-      })
-
-      if (stripeError) {
-        setError(stripeError.message || 'An error occurred')
+      // Handle mock mode (when Stripe is not configured)
+      if (mockMode) {
+        console.log('Mock payment completed')
+        
+        // Set redirecting state to prevent cart emptiness interference
+        setIsRedirecting(true)
+        
+        // Clear cart and redirect to success page
+        clearCart()
+        router.push('/checkout/success?mock=true')
+        return
       }
+
+      // Handle real payment
+      if (realPayment && sessionId) {
+        console.log('Redirecting to Stripe Checkout for real payment...')
+        
+        // Get Stripe instance
+        const stripe = await getStripe()
+        if (!stripe) {
+          setError('Payment system unavailable. Please try again.')
+          setIsLoading(false)
+          return
+        }
+
+        // Redirect to Stripe Checkout
+        const { error: stripeError } = await stripe.redirectToCheckout({
+          sessionId
+        })
+
+        if (stripeError) {
+          setError(`Payment error: ${stripeError.message}`)
+          setIsLoading(false)
+        }
+        
+        // Note: If successful, user will be redirected to Stripe and then back to success page
+        // No need to clear cart here as it will be handled on the success page
+        return
+      }
+
+      // Fallback error
+      setError('Unknown payment processing error')
+      setIsLoading(false)
+
     } catch (error) {
-      setError('An error occurred. Please try again.')
-    } finally {
+      console.error('Payment error:', error)
+      setError('Network error. Please check your connection and try again.')
       setIsLoading(false)
     }
   }
 
-  if (items.length === 0) {
-    return null
+  if (items.length === 0 && !isRedirecting) {
+    return (
+      <div className="min-h-screen bg-primary-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-primary-900 mb-4">Cart is Empty</h1>
+          <p className="text-primary-600 mb-6">Add some products to your cart to proceed with checkout.</p>
+          <Link href="/products">
+            <button className="cart-button-force" style={{
+              backgroundColor: '#000000',
+              color: '#ffffff',
+              border: '3px solid #000000',
+              borderRadius: '6px',
+              padding: '16px 32px',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              minHeight: '56px',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease-in-out',
+              boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+            }}>
+              Shop Now
+            </button>
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -145,7 +215,19 @@ export default function CheckoutPage() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   {error && (
                     <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
-                      {error}
+                      <div className="font-medium mb-2">Payment Setup Required</div>
+                      <div className="text-sm whitespace-pre-line">{error}</div>
+                      {error.includes('set up Stripe') && (
+                        <div className="mt-3 text-sm">
+                          <p className="font-medium">Quick Setup Guide:</p>
+                          <ol className="list-decimal list-inside mt-1 space-y-1">
+                            <li>Visit <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">stripe.com</a> and create an account</li>
+                            <li>Go to Dashboard → Developers → API keys</li>
+                            <li>Copy your test keys to the .env.local file</li>
+                            <li>Restart the development server</li>
+                          </ol>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -257,13 +339,39 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  <Button
+                  <button
                     type="submit"
-                    className="w-full"
                     disabled={isLoading}
+                    className="w-full cart-button-force"
+                    style={{
+                      backgroundColor: '#000000',
+                      color: '#ffffff',
+                      border: '3px solid #000000',
+                      borderRadius: '6px',
+                      padding: '16px 32px',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      textTransform: 'uppercase',
+                      letterSpacing: '1px',
+                      minHeight: '56px',
+                      cursor: isLoading ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.2s ease-in-out',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+                      width: '100%',
+                      textAlign: 'center',
+                      opacity: isLoading ? 0.6 : 1
+                    }}
+                    onMouseEnter={(e) => {
+                      if (isLoading) return
+                      e.currentTarget.style.backgroundColor = '#374151'
+                    }}
+                    onMouseLeave={(e) => {
+                      if (isLoading) return
+                      e.currentTarget.style.backgroundColor = '#000000'
+                    }}
                   >
                     {isLoading ? 'Processing...' : `Pay ${formatPrice(calculateTotal())}`}
-                  </Button>
+                  </button>
                 </form>
               </CardContent>
             </Card>

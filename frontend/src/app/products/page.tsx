@@ -8,84 +8,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline'
 import ProductCard from '@/components/products/ProductCard'
-
-// Mock data - will be replaced with actual database calls
-const products = [
-  {
-    id: '1',
-    name: 'Elegant Black Midi Dress',
-    price: 129.99,
-    originalPrice: 149.99,
-    image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&h=800&fit=crop',
-    category: 'women',
-    rating: 4.5,
-    reviewCount: 124,
-    sizes: ['XS', 'S', 'M', 'L', 'XL'],
-    colors: ['Black'],
-    stock: 25,
-  },
-  {
-    id: '2',
-    name: 'Classic White Button Shirt',
-    price: 79.99,
-    originalPrice: 99.99,
-    image: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&h=800&fit=crop',
-    category: 'men',
-    rating: 4.7,
-    reviewCount: 89,
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    colors: ['White', 'Blue'],
-    stock: 40,
-  },
-  {
-    id: '3',
-    name: 'Leather Crossbody Bag',
-    price: 159.99,
-    originalPrice: 199.99,
-    image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&h=800&fit=crop',
-    category: 'accessories',
-    rating: 4.8,
-    reviewCount: 156,
-    colors: ['Brown', 'Black'],
-    stock: 15,
-  },
-  {
-    id: '4',
-    name: 'Classic Sunglasses',
-    price: 89.99,
-    image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&h=800&fit=crop',
-    category: 'accessories',
-    rating: 4.6,
-    reviewCount: 203,
-    colors: ['Black', 'Tortoise'],
-    stock: 30,
-  },
-  {
-    id: '5',
-    name: 'Floral Summer Dress',
-    price: 89.99,
-    originalPrice: 109.99,
-    image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&h=800&fit=crop',
-    category: 'women',
-    rating: 4.4,
-    reviewCount: 78,
-    sizes: ['XS', 'S', 'M', 'L'],
-    colors: ['Floral'],
-    stock: 20,
-  },
-  {
-    id: '6',
-    name: 'Casual Denim Shirt',
-    price: 69.99,
-    image: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3ccf?w=600&h=800&fit=crop',
-    category: 'men',
-    rating: 4.3,
-    reviewCount: 92,
-    sizes: ['S', 'M', 'L', 'XL'],
-    colors: ['Blue', 'Light Blue'],
-    stock: 35,
-  },
-]
+import { allProducts } from '@/data/products'
 
 const categories = [
   { value: 'all', label: 'All Categories' },
@@ -111,7 +34,7 @@ export default function ProductsPage() {
   const [showFilters, setShowFilters] = useState(false)
 
   // Filter and sort products
-  const filteredProducts = products
+  const filteredProducts = allProducts
     .filter((product) => {
       const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory

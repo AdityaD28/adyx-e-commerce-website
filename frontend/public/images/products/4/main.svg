@@ -1,0 +1,16 @@
+<svg width="600" height="800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0fdf4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#dcfce7;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="800" fill="url(#greenGradient)"/>
+  <rect x="50" y="50" width="500" height="700" fill="#ffffff" stroke="#16a34a" stroke-width="3" rx="10"/>
+  <circle cx="300" cy="250" r="80" fill="#16a34a" opacity="0.2"/>
+  <text x="300" y="350" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#14532d">Product 4</text>
+  <text x="300" y="390" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#15803d">Classic Sunglasses</text>
+  <text x="300" y="430" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#15803d">Accessories Collection</text>
+  <text x="300" y="500" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#16a34a">$129.99</text>
+  <text x="300" y="650" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#15803d">Replace with actual product image</text>
+</svg>

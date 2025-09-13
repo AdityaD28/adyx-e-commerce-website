@@ -103,6 +103,8 @@ export const useCartStore = create<CartStore>()(
     {
       name: 'adyx-cart',
       version: 1,
+      // Skip hydration if running on server
+      skipHydration: typeof window === 'undefined',
     }
   )
 )

@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useCartStore } from '@/stores/cart'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { getPlaceholderImage } from '@/utils/imageUtils'
 
 interface Product {
   id: string
@@ -27,10 +28,16 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, variant = 'default' }: ProductCardProps) {
-  const [selectedSize, setSelectedSize] = useState<string>('')
-  const [selectedColor, setSelectedColor] = useState<string>('')
+  const [selectedSize, setSelectedSize] = useState<string>(product.sizes?.[0] || '')
+  const [selectedColor, setSelectedColor] = useState<string>(product.colors?.[0] || '')
   const [isLoading, setIsLoading] = useState(false)
   const { addItem, toggleCart } = useCartStore()
+
+  // Simple fallback image function
+  const getImageSrc = () => {
+    // Always use the product image directly
+    return product.image || getPlaceholderImage(product.category, 400, 600)
+  }
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -47,7 +54,7 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
       productId: product.id,
       name: product.name,
       price: product.price,
-      image: product.image,
+      image: getImageSrc(), // Use the same image source as display
       size: selectedSize || product.sizes?.[0],
       color: selectedColor || product.colors?.[0],
       maxQuantity: product.stock
@@ -66,19 +73,34 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
     <Card className="group relative overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <div className="relative overflow-hidden">
         <Link href={`/products/${product.id}`}>
-          <div className="aspect-[3/4] relative">
-            <Image
-              src={product.image}
-              alt={product.name}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
+          <div className="aspect-[3/4] relative bg-gray-100 overflow-hidden">
+            {getImageSrc().startsWith('/images/') ? (
+              <img
+                src={getImageSrc()}
+                alt={product.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement
+                  target.src = getPlaceholderImage(product.category, 400, 600)
+                }}
+              />
+            ) : (
+              <Image
+                src={getImageSrc()}
+                alt={product.name}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority={variant === 'featured'}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement
+                  // Use local category placeholder as final fallback
+                  target.src = getPlaceholderImage(product.category, 400, 600)
+                }}
+              />
+            )}
           </div>
         </Link>
-        
-        {/* Overlay on hover */}
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300" />
         
         {/* Quick actions */}
         <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -140,7 +162,7 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
                   </svg>
                 ))}
               </div>
-              <span className="text-sm text-primary-600">
+              <span className="text-sm text-gray-600">
                 ({product.reviewCount || 0})
               </span>
             </div>
@@ -151,23 +173,27 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
             <div className="space-y-2">
               {product.sizes && product.sizes.length > 0 && (
                 <div>
-                  <p className="text-xs text-primary-600 mb-1">Size:</p>
+                  <p className="text-xs text-gray-600 mb-1">Size:</p>
                   <div className="flex gap-1">
                     {product.sizes.slice(0, 3).map((size) => (
                       <button
                         key={size}
-                        onClick={() => setSelectedSize(size)}
-                        className={`text-xs px-2 py-1 border rounded ${
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setSelectedSize(selectedSize === size ? '' : size)
+                        }}
+                        className={`text-xs px-2 py-1 border rounded transition-all ${
                           selectedSize === size
-                            ? 'border-primary-900 bg-primary-900 text-white'
-                            : 'border-primary-300 hover:border-primary-500'
+                            ? 'border-black bg-black text-white'
+                            : 'border-gray-300 text-gray-700 hover:border-gray-500'
                         }`}
                       >
                         {size}
                       </button>
                     ))}
                     {product.sizes.length > 3 && (
-                      <span className="text-xs text-primary-500 px-2 py-1">
+                      <span className="text-xs text-gray-500 px-2 py-1">
                         +{product.sizes.length - 3}
                       </span>
                     )}
@@ -177,23 +203,27 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
 
               {product.colors && product.colors.length > 0 && (
                 <div>
-                  <p className="text-xs text-primary-600 mb-1">Color:</p>
+                  <p className="text-xs text-gray-600 mb-1">Color:</p>
                   <div className="flex gap-1">
                     {product.colors.slice(0, 4).map((color) => (
                       <button
                         key={color}
-                        onClick={() => setSelectedColor(color)}
-                        className={`w-6 h-6 rounded-full border-2 ${
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setSelectedColor(selectedColor === color ? '' : color)
+                        }}
+                        className={`w-6 h-6 rounded-full border-2 transition-all ${
                           selectedColor === color
-                            ? 'border-primary-900'
-                            : 'border-primary-300'
+                            ? 'border-black ring-2 ring-black ring-offset-1'
+                            : 'border-gray-300 hover:border-gray-500'
                         }`}
                         style={{ backgroundColor: color.toLowerCase() }}
                         title={color}
                       />
                     ))}
                     {product.colors.length > 4 && (
-                      <span className="text-xs text-primary-500 flex items-center px-1">
+                      <span className="text-xs text-gray-500 flex items-center px-1">
                         +{product.colors.length - 4}
                       </span>
                     )}
@@ -205,11 +235,11 @@ export default function ProductCard({ product, variant = 'default' }: ProductCar
 
           {/* Price */}
           <div className="flex items-center gap-2 pt-2">
-            <span className="font-semibold text-primary-900">
+            <span className="font-semibold text-gray-900">
               {formatPrice(product.price)}
             </span>
             {product.originalPrice && product.originalPrice > product.price && (
-              <span className="text-sm text-primary-500 line-through">
+              <span className="text-sm text-gray-500 line-through">
                 {formatPrice(product.originalPrice)}
               </span>
             )}

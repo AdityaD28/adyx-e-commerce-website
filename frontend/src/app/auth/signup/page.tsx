@@ -31,14 +31,14 @@ export default function SignUpPage() {
       return
     }
 
-    if (formData.password.length < 8) {
-      setError('Password must be at least 8 characters long')
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long')
       setIsLoading(false)
       return
     }
 
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ export default function SignUpPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-primary-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           <Card>
             <CardContent className="text-center py-12">
@@ -85,8 +85,8 @@ export default function SignUpPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-primary-900 mb-2">Account Created!</h2>
-              <p className="text-primary-600">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Account Created!</h2>
+              <p className="text-gray-600">
                 Your account has been created successfully. Redirecting to sign in...
               </p>
             </CardContent>
@@ -97,13 +97,13 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-primary-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-primary-900">
+          <h2 className="text-3xl font-bold text-gray-900">
             Create your AdyX account
           </h2>
-          <p className="mt-2 text-sm text-primary-600">
+          <p className="mt-2 text-sm text-gray-600">
             Join thousands of customers who trust AdyX for premium fashion.
           </p>
         </div>
@@ -121,7 +121,7 @@ export default function SignUpPage() {
               )}
 
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-primary-700">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                   Full name
                 </label>
                 <Input
@@ -138,7 +138,7 @@ export default function SignUpPage() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-primary-700">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email address
                 </label>
                 <Input
@@ -155,7 +155,7 @@ export default function SignUpPage() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-primary-700">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                   Password
                 </label>
                 <Input
@@ -172,7 +172,7 @@ export default function SignUpPage() {
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-primary-700">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
                   Confirm password
                 </label>
                 <Input
@@ -194,15 +194,15 @@ export default function SignUpPage() {
                   name="terms"
                   type="checkbox"
                   required
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-primary-300 rounded"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <label htmlFor="terms" className="ml-2 block text-sm text-primary-700">
+                <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
                   I agree to the{' '}
-                  <Link href="/legal/terms" className="font-medium text-primary-600 hover:text-primary-500">
+                  <Link href="/legal/terms" className="font-medium text-blue-600 hover:text-blue-500">
                     Terms of Service
                   </Link>{' '}
                   and{' '}
-                  <Link href="/legal/privacy" className="font-medium text-primary-600 hover:text-primary-500">
+                  <Link href="/legal/privacy" className="font-medium text-blue-600 hover:text-blue-500">
                     Privacy Policy
                   </Link>
                 </label>
@@ -210,7 +210,7 @@ export default function SignUpPage() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-black hover:bg-gray-800 text-white"
                 disabled={isLoading}
               >
                 {isLoading ? 'Creating account...' : 'Create account'}
@@ -220,10 +220,10 @@ export default function SignUpPage() {
             <div className="mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-primary-300" />
+                  <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-primary-500">Already have an account?</span>
+                  <span className="px-2 bg-white text-gray-500">Already have an account?</span>
                 </div>
               </div>
 

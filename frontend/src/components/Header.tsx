@@ -6,7 +6,7 @@ import { useSession, signOut } from 'next-auth/react'
 import { ShoppingBagIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
-import { useCartStore } from '@/stores/cart'
+import { useCartHydration } from '@/hooks/useCartHydration'
 import CartSidebar from './cart/CartSidebar'
 
 const navigation = [
@@ -21,7 +21,7 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const { data: session, status } = useSession()
-  const { toggleCart, getTotalItems } = useCartStore()
+  const { toggleCart, getTotalItems, isHydrated } = useCartHydration()
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: '/' })
@@ -66,23 +66,24 @@ export default function Header() {
           </div>
 
           {/* Right side buttons */}
-          <div className="flex flex-1 items-center justify-end space-x-4 lg:space-x-6">
+          <div className="flex items-center justify-end space-x-4 lg:space-x-6 lg:flex-1">
             {/* Search */}
-            <div className="flex items-center">
+            <div className="flex items-center relative">
               {searchOpen ? (
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 bg-white rounded-md px-3 py-2">
                   <Input
                     type="search"
                     placeholder="Search products..."
-                    className="w-48 sm:w-64"
+                    className="w-64 focus:ring-0 focus:outline-none border-0 shadow-none"
                     autoFocus
                   />
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setSearchOpen(false)}
+                    className="h-6 w-6 flex-shrink-0"
                   >
-                    <XMarkIcon className="h-5 w-5" />
+                    <XMarkIcon className="h-4 w-4" />
                   </Button>
                 </div>
               ) : (
@@ -153,13 +154,13 @@ export default function Header() {
               </div>
             ) : (
               <div className="flex items-center space-x-2">
-                <Link href="/auth/signin">
-                  <Button variant="ghost" size="sm">
+                <Link href="/auth/signin" className="cursor-pointer">
+                  <Button variant="ghost" size="sm" className="cursor-pointer">
                     Sign In
                   </Button>
                 </Link>
-                <Link href="/auth/signup">
-                  <Button size="sm">
+                <Link href="/auth/signup" className="cursor-pointer">
+                  <Button size="sm" className="cursor-pointer">
                     Sign Up
                   </Button>
                 </Link>
@@ -172,10 +173,10 @@ export default function Header() {
               size="icon" 
               onClick={toggleCart}
               aria-label="Shopping cart" 
-              className="relative"
+              className="relative cursor-pointer"
             >
               <ShoppingBagIcon className="h-6 w-6" />
-              {getTotalItems() > 0 && (
+              {isHydrated && getTotalItems() > 0 && (
                 <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-accent-500 text-xs font-medium text-white flex items-center justify-center">
                   {getTotalItems()}
                 </span>
@@ -183,20 +184,6 @@ export default function Header() {
             </Button>
           </div>
         </div>
-
-        {/* Desktop search bar (hidden when mobile search is active) */}
-        {!searchOpen && (
-          <div className="hidden lg:block pb-6">
-            <div className="relative max-w-md mx-auto">
-              <Input
-                type="search"
-                placeholder="Search for products..."
-                className="pl-10"
-              />
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary-400" />
-            </div>
-          </div>
-        )}
       </nav>
 
       {/* Mobile menu */}

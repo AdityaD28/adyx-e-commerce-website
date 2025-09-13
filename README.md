@@ -1,224 +1,230 @@
-# AdyX E-commerce - README
+# AdyX - Modern E-commerce Platform
 
-A modern, production-ready e-commerce platform built with Next.js, inspired by ZARA's design philosophy.
+A full-stack e-commerce platform built with Next.js 15, featuring a complete shopping experience with authentication, cart management, and Stripe payment integration.
 
-## 🚀 Features
+## Features
 
-### Core E-commerce Features
-- **Product Catalog**: Browse products with advanced filtering and search
-- **Shopping Cart**: Persistent cart with quantity management
-- **Secure Checkout**: Stripe integration for payment processing
-- **User Authentication**: Sign up, sign in, and profile management
-- **Order Management**: Complete order tracking and history
-- **Admin Panel**: Comprehensive product and order management
+### Core Functionality
+- Product catalog with categories (Men, Women, Accessories)
+- Shopping cart with persistent storage
+- User authentication (sign up, sign in, sign out)
+- Secure checkout with Stripe integration
+- Order management system
+- Responsive design for all devices
 
-### Technical Features
-- **Modern Stack**: Next.js 15, TypeScript, Tailwind CSS
-- **Database**: PostgreSQL with Prisma ORM
-- **Authentication**: NextAuth.js v5 with role-based access
-- **Payments**: Stripe integration with webhooks
-- **State Management**: Zustand for cart persistence
-- **Responsive Design**: Mobile-first approach
-- **Production Ready**: Docker deployment with SSL support
+### Product Management
+- Comprehensive product database
+- Product variants (sizes, colors)
+- High-quality product images
+- Product filtering and search
+- Category-based navigation
 
-## �️ Technology Stack
+### User Experience
+- Modern, clean interface inspired by ZARA
+- Real-time cart updates
+- Form validation
+- Loading states and error handling
+- Mobile-responsive design
 
-- **Frontend**: Next.js 15, React 19, TypeScript
-- **Styling**: Tailwind CSS v4, Headless UI
-- **Database**: PostgreSQL with Prisma ORM
-- **Authentication**: NextAuth.js v5
-- **Payments**: Stripe
-- **State Management**: Zustand
-- **Deployment**: Docker, Nginx, Let's Encrypt
-- **Development**: Turbopack, ESLint
+### Payment & Security
+- Stripe payment processing
+- Secure user authentication with NextAuth.js
+- Environment-based configuration
+- Error handling and validation
 
-## � Project Structure
+## Tech Stack
 
-```
-adyx-ecommerce/
-├── frontend/                 # Next.js application
-│   ├── src/
-│   │   ├── app/             # App router pages
-│   │   ├── components/      # Reusable components
-│   │   ├── lib/             # Utility functions
-│   │   └── stores/          # Zustand stores
-│   ├── prisma/              # Database schema and migrations
-│   └── public/              # Static assets
-├── scripts/                 # Deployment and management scripts
-├── nginx/                   # Nginx configuration
-├── docker-compose.yml       # Docker services
-├── Dockerfile              # Application container
-└── DEPLOYMENT.md           # Detailed deployment guide
-```
+### Frontend
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first CSS framework
+- **Zustand** - State management for cart
+- **React Hook Form** - Form handling and validation
 
-## 🚀 Quick Start
+### Backend
+- **Next.js API Routes** - Serverless backend functions
+- **Prisma** - Database ORM
+- **PostgreSQL** - Primary database
+- **NextAuth.js** - Authentication system
 
-### Development Setup
+### Payment & Services
+- **Stripe** - Payment processing
+- **bcryptjs** - Password hashing
 
-1. **Clone the repository**:
+### Development Tools
+- **ESLint** - Code linting
+- **Turbopack** - Fast development builds
+- **Docker** - Database containerization
+
+## Getting Started
+
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Docker (for database)
+- Stripe account (for payments)
+
+### Installation
+
+1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd adyx-ecommerce
+   cd E-commerce-website
    ```
 
-2. **Start the database**:
-   ```bash
-   docker-compose up -d postgres redis
-   ```
-
-3. **Setup the frontend**:
+2. **Install dependencies**
    ```bash
    cd frontend
    npm install
-   cp .env.example .env.local
-   # Edit .env.local with your configuration
    ```
 
-4. **Setup the database**:
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env.local
+   ```
+
+4. **Configure environment variables in .env.local**
+   ```bash
+   # Database
+   DATABASE_URL="postgresql://postgres:postgres@localhost:5434/adyx_ecommerce"
+
+   # NextAuth.js
+   NEXTAUTH_SECRET="your-super-secret-key-min-32-chars-long"
+   NEXTAUTH_URL="http://localhost:3000"
+
+   # Stripe
+   STRIPE_SECRET_KEY="sk_test_your_stripe_secret_key"
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_your_stripe_publishable_key"
+   ```
+
+5. **Start the database**
+   ```bash
+   docker start adyx-postgres
+   # Or create new container:
+   docker run --name adyx-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=adyx_ecommerce -p 5434:5432 -d postgres:15
+   ```
+
+6. **Set up the database**
    ```bash
    npx prisma generate
    npx prisma db push
-   npx prisma db seed
    ```
 
-5. **Start the development server**:
+7. **Start the development server**
    ```bash
    npm run dev
    ```
 
-Visit [http://localhost:3001](http://localhost:3001) to see the application.
+8. **Access the application**
+   - Frontend: http://localhost:3000
+   - Database: PostgreSQL on localhost:5434
 
-### Production Deployment
+## Project Structure
 
-For production deployment, see the detailed [DEPLOYMENT.md](./DEPLOYMENT.md) guide.
-
-Quick production start:
-```bash
-# Copy and configure environment
-cp .env.production.example .env.production
-# Edit .env.production with your values
-
-# Deploy with Docker
-./scripts/deploy.sh
+```
+E-commerce-website/
+├── frontend/
+│   ├── src/
+│   │   ├── app/                 # Next.js app directory
+│   │   │   ├── api/            # API routes
+│   │   │   ├── auth/           # Authentication pages
+│   │   │   ├── categories/     # Category pages
+│   │   │   ├── checkout/       # Checkout flow
+│   │   │   └── products/       # Product pages
+│   │   ├── components/         # Reusable components
+│   │   │   ├── auth/          # Authentication components
+│   │   │   ├── cart/          # Shopping cart components
+│   │   │   ├── products/      # Product components
+│   │   │   └── ui/            # UI components
+│   │   ├── data/              # Static data and product catalog
+│   │   ├── hooks/             # Custom React hooks
+│   │   ├── lib/               # Utility libraries
+│   │   ├── stores/            # Zustand stores
+│   │   └── utils/             # Utility functions
+│   ├── public/
+│   │   └── images/            # Product images and assets
+│   ├── prisma/               # Database schema and migrations
+│   └── package.json
+└── backend/                  # Backend configuration and database
 ```
 
-## 🔧 Configuration
+## Key Components
 
-### Environment Variables
+### Authentication System
+- User registration and login
+- Password hashing with bcryptjs
+- Session management with NextAuth.js
+- Protected routes and middleware
 
-Create `.env.local` for development or `.env.production` for production:
+### Shopping Cart
+- Persistent cart state with Zustand
+- Local storage synchronization
+- Real-time updates
+- Quantity management
+- Product variants support
 
+### Product Catalog
+- Comprehensive product database
+- Category-based organization
+- Product variants (size, color)
+- High-quality images
+- Search and filtering capabilities
+
+### Checkout System
+- Multi-step checkout process
+- Address and billing information
+- Stripe payment integration
+- Order confirmation
+- Error handling
+
+## Database Schema
+
+### Core Models
+- **User** - Customer accounts and authentication
+- **Product** - Product catalog with variants
+- **Order** - Order management and history
+- **CartItem** - Shopping cart persistence
+
+### Key Features
+- Prisma ORM for type-safe database operations
+- PostgreSQL for reliable data storage
+- Automatic migrations and schema updates
+
+## Payment Integration
+
+### Stripe Configuration
+- Test and production environment support
+- Secure payment processing
+- Webhook handling for order updates
+- Comprehensive error handling
+
+### Supported Features
+- Credit card payments
+- Multiple currencies (USD primary)
+- Tax calculation
+- Shipping cost calculation
+- Order confirmation emails
+
+## Development
+
+### Available Scripts
 ```bash
-# Database
-DATABASE_URL="postgresql://postgres:postgres@localhost:5434/adyx_ecommerce"
-
-# NextAuth.js
-NEXTAUTH_SECRET="your-secret-key"
-NEXTAUTH_URL="http://localhost:3001"
-
-# Stripe
-STRIPE_SECRET_KEY="sk_test_your_stripe_secret_key"
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_your_stripe_publishable_key"
-STRIPE_WEBHOOK_SECRET="whsec_your_webhook_secret"
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run db:generate  # Generate Prisma client
+npm run db:push      # Push schema to database
+npm run db:studio    # Open Prisma Studio
 ```
 
-### Database Configuration
+### Environment Configuration
+- Development: Uses .env.local
+- Production: Configure environment variables on hosting platform
+- Database: PostgreSQL connection string
+- Payments: Stripe API keys
 
-The application uses PostgreSQL with Prisma. Key commands:
-
-```bash
-# Generate Prisma client
-npx prisma generate
-
-# Push schema to database
-npx prisma db push
-
-# Run migrations
-npx prisma migrate dev
-
-# Seed database
-npx prisma db seed
-
-# Open Prisma Studio
-npx prisma studio
-```
-
-## 📱 Features Overview
-
-### Customer Features
-- **Homepage**: Hero section, featured products, categories
-- **Product Catalog**: Grid/list view, filters, search, pagination
-- **Product Details**: Image gallery, size/color selection, reviews
-- **Shopping Cart**: Add/remove items, quantity management
-- **Checkout**: Guest/registered checkout, Stripe payment
-- **User Account**: Profile management, order history
-- **Authentication**: Sign up, sign in, password reset
-
-### Admin Features
-- **Dashboard**: Sales overview, analytics, quick stats
-- **Product Management**: CRUD operations, inventory tracking
-- **Order Management**: Order processing, status updates
-- **User Management**: Customer overview, role management
-- **Analytics**: Sales reports, popular products
-
-### Technical Features
-- **Responsive Design**: Works on all devices
-- **Performance**: Optimized images, caching, lazy loading
-- **Security**: HTTPS, CSP headers, input validation
-- **SEO**: Meta tags, structured data, sitemap
-- **Monitoring**: Health checks, error tracking
-- **Scalability**: Horizontal scaling ready
-
-## 🎨 Design System
-
-### Color Palette
-- **Primary**: Black (#000000) - Main brand color
-- **Secondary**: White (#FFFFFF) - Background and contrast
-- **Accent**: Gray tones for text and borders
-- **Interactive**: Hover states and active elements
-
-### Typography
-- **Headings**: Bold, clean sans-serif
-- **Body**: Readable font with proper line height
-- **Buttons**: Consistent styling across the platform
-
-### Components
-- **Buttons**: Primary, secondary, outline variants
-- **Forms**: Clean inputs with validation states
-- **Cards**: Product cards, info cards
-- **Navigation**: Header, footer, breadcrumbs
-
-## 🔒 Security
-
-- **Authentication**: Secure session management
-- **Authorization**: Role-based access control
-- **Data Protection**: Input validation, sanitization
-- **HTTPS**: SSL/TLS encryption
-- **Rate Limiting**: API endpoint protection
-- **Security Headers**: XSS, CSRF protection
-
-## 📊 Performance
-
-- **Core Web Vitals**: Optimized for Google's metrics
-- **Image Optimization**: Next.js Image component
-- **Code Splitting**: Automatic route-based splitting
-- **Caching**: Redis for sessions, CDN for static assets
-- **Database**: Optimized queries with Prisma
-
-## 🧪 Testing
-
-```bash
-# Run tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run E2E tests
-npm run test:e2e
-```
-
-## � API Documentation
+## API Endpoints
 
 ### Authentication
 - `POST /api/auth/signin` - User sign in
@@ -228,71 +234,105 @@ npm run test:e2e
 ### Products
 - `GET /api/products` - Get products with filters
 - `GET /api/products/[id]` - Get single product
-- `POST /api/products` - Create product (admin)
-- `PUT /api/products/[id]` - Update product (admin)
-- `DELETE /api/products/[id]` - Delete product (admin)
 
 ### Orders
 - `GET /api/orders` - Get user orders
 - `POST /api/orders` - Create new order
-- `GET /api/orders/[id]` - Get single order
 
 ### Stripe
-- `POST /api/stripe/checkout` - Create checkout session
+- `POST /api/checkout` - Create checkout session
 - `POST /api/stripe/webhook` - Handle Stripe webhooks
 
-## 🤝 Contributing
+## Deployment
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
+### Prerequisites
+- Node.js hosting platform (Vercel, Netlify, etc.)
+- PostgreSQL database (Supabase, Railway, etc.)
+- Environment variables configured
 
-## 📄 License
+### Build Process
+1. Install dependencies
+2. Generate Prisma client
+3. Build Next.js application
+4. Deploy to hosting platform
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Environment Variables
+Ensure all required environment variables are set:
+- DATABASE_URL
+- NEXTAUTH_SECRET
+- NEXTAUTH_URL
+- STRIPE_SECRET_KEY
+- NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 
-## 🆘 Support
+## Contributing
 
-- **Documentation**: Check [DEPLOYMENT.md](./DEPLOYMENT.md) for deployment help
-- **Issues**: Open an issue on GitHub
-- **Discussions**: Use GitHub Discussions for questions
+### Development Guidelines
+1. Follow TypeScript best practices
+2. Use ESLint configuration
+3. Write descriptive commit messages
+4. Test all functionality before commits
+5. Maintain responsive design principles
 
-## 🗺️ Roadmap
+### Code Style
+- Use TypeScript for type safety
+- Follow Next.js conventions
+- Implement proper error handling
+- Use semantic HTML elements
+- Follow accessibility guidelines
 
-### Phase 1 (Completed) ✅
-- [x] Basic e-commerce functionality
-- [x] User authentication
-- [x] Shopping cart
-- [x] Stripe integration
-- [x] Admin panel
-- [x] Docker deployment
+## Troubleshooting
 
-### Phase 2 (Future)
-- [ ] Advanced search with Elasticsearch
-- [ ] Product reviews and ratings
-- [ ] Wishlist functionality
-- [ ] Email notifications
-- [ ] Inventory management
-- [ ] Multi-language support
-- [ ] Social authentication
-- [ ] Progressive Web App (PWA)
+### Common Issues
 
-### Phase 3 (Future)
-- [ ] Multi-vendor support
-- [ ] Advanced analytics
-- [ ] AI-powered recommendations
-- [ ] Mobile app
-- [ ] International shipping
-- [ ] Subscription products
+**Database Connection Issues**
+- Ensure PostgreSQL is running
+- Check DATABASE_URL in .env.local
+- Run `npx prisma generate` after schema changes
 
-## � Acknowledgments
+**Stripe Payment Errors**
+- Verify Stripe API keys are correct
+- Check webhook configuration
+- Ensure HTTPS in production
 
-- Design inspiration from ZARA
-- Built with amazing open-source technologies
-- Community feedback and contributions
+**Build Errors**
+- Clear .next directory
+- Reinstall node_modules
+- Check TypeScript errors
 
----
+### Performance Tips
+- Images are optimized with Next.js Image component
+- Code splitting with dynamic imports
+- Database queries optimized with Prisma
+- Static generation where possible
 
-**AdyX E-commerce** - Building the future of online retail 🛍️
+## Security Features
+
+- **Authentication**: Secure session management with NextAuth.js
+- **Authorization**: Role-based access control
+- **Data Protection**: Input validation and sanitization
+- **Password Security**: bcryptjs hashing
+- **Environment Variables**: Secure configuration management
+
+## Performance Optimizations
+
+- **Next.js Image Optimization**: Automatic image optimization and lazy loading
+- **Code Splitting**: Automatic route-based code splitting
+- **Caching**: Efficient caching strategies
+- **Database**: Optimized queries with Prisma
+- **Build Optimization**: Turbopack for fast development builds
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For support and questions, please open an issue in the repository or contact the development team.
+
+## Acknowledgments
+
+- Next.js team for the excellent framework
+- Stripe for payment processing
+- Prisma for database management
+- Tailwind CSS for styling system
+- All contributors to the open-source libraries used
